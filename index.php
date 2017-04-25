@@ -126,8 +126,8 @@ $items = [
             <h2>Открытые лоты</h2>
             <select class="lots__select">
             <option>Все категории</option>
-                <?php foreach ($product_category as $value):?>
-                <option><?=$value;?></option> 
+                <?php foreach ($product_category as $category):?>
+                <option><?=$category;?></option> 
                <?php endforeach;?> 
             </select>
         </div>
