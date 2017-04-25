@@ -3,24 +3,24 @@
 // ставки пользователей, которыми надо заполнить таблицу
 $bets = [
     ['name' => 'Иван', 'price' => 11500, 'ts' => strtotime('-' . rand(1, 50) .' minute')],
-     ['name' => 'Константин', 'price' => 11000, 'ts' => strtotime('-' . rand(1, 18) .' hour')],
+    ['name' => 'Константин', 'price' => 11000, 'ts' => strtotime('-' . rand(1, 18) .' hour')],
     ['name' => 'Евгений', 'price' => 10500, 'ts' => strtotime('-' . rand(25, 50) .' hour')],
-     ['name' => 'Семён', 'price' => 10000, 'ts' => strtotime('last week')]
+    ['name' => 'Семён', 'price' => 10000, 'ts' => strtotime('last week')]
 ];
 
 function convertTime($time_lot) {
   $now = time();
-  if ($now - $time_lot < 86400) {
-      if ($now - $time_lot < 3600 * 24 and $now - $time_lot < 3600) {         
+  if ($now - $time_lot < 86400) {  
+      if ($now - $time_lot < 3600 * 24 and $now - $time_lot < 3600) {   
         return intval(date('i', $time_lot)).' минут назад';
       } elseif ($now - $time_lot < 3600 * 24 and $now - $time_lot > 3600) {
         return date('G'.' часов назад', $time_lot);
       } else {
         return 'Час назад';  
       }
-  } else {
-    return date('d.m.y '.'в'.' H:i', $time_lot);
-  }
+ } else {
+     return date('d.m.y '.'в'.' H:i', $time_lot);
+   }
 }
 ?>
 
