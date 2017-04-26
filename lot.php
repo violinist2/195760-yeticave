@@ -1,113 +1,35 @@
 <?php
-// устанавливаем часовой пояс в Московское время
-date_default_timezone_set('Europe/Moscow');
 
-// записать в эту переменную оставшееся время в этом формате (ЧЧ:ММ)
-$lot_time_remaining = "00:00";
+// ставки пользователей, которыми надо заполнить таблицу//lot.php
 
-// временная метка для полночи следующего дня
-$tomorrow = strtotime('tomorrow midnight');
-
-// временная метка для настоящего времени
-$now = time();
-
-// далее нужно вычислить оставшееся время до начала следующих суток и записать его в переменную $lot_time_remaining
-// ...
-$product_category = [
-    'Доски и лыжи', 
-    'Крепления', 
-    'Ботинки', 
-    'Одежда', 
-    'Инструменты', 
-    'Разное'
+$bets = [
+    ['name' => 'Иван', 'price' => 11500, 'ts' => strtotime('-' . rand(1, 50) .' minute')],
+    ['name' => 'Константин', 'price' => 11000, 'ts' => strtotime('-' . rand(1, 18) .' hour')],
+    ['name' => 'Евгений', 'price' => 10500, 'ts' => strtotime('-' . rand(25, 50) .' hour')],
+    ['name' => 'Семён', 'price' => 10000, 'ts' => strtotime('last week')]
 ];
-<<<<<<< HEAD
 
-
-$items = [
-    [
-        'itemsname' => '2014 Rossignol District Snowboard',
-        'category' => 'Доски и лыжи', 
-        'price' => '10999', 
-        'image' => 'img/lot-1.jpg'
-    ], 
-    [
-        'itemsname' => 'DC Ply Mens 2016/2017 Snowboard',
-        'category' =>'Доски и лыжи',
-        'price' => '159999', 
-        'image' => 'img/lot-2.jpg'
-    ], 
-    [
-        'itemsname' => 'Крепления Union Contact Pro 2015 года размер L/XL',
-        'category' => 'Крепления',
-        'price' => '8000',
-        'image' => 'img/lot-3.jpg'
-     ],
-    [
-        'itemsname' => 'Ботинки для сноуборда DC Mutiny Charocal',
-        'category' => 'Ботинки',
-        'price' => '10999',
-        'image' => 'img/lot-4.jpg'
-     ], 
-    [
-        'itemsname' => 'Куртка для сноуборда DC Mutiny Charocal',
-        'category' => 'Одежда',
-        'price' => '7500', 
-        'image' => 'img/lot-5.jpg'
-    ],
-    [
-        'itemsname' => 'Маска Oakley Canopy',
-        'category' => 'Разное',
-        'price' => '5400', 
-        'image' => 'img/lot-6.jpg'
-=======
-//print_r($product_category);
-
-$items = [
-    [
-    'itemsname' => '2014 Rossignol District Snowboard',
-    'category' => 'Доски и лыжи', 
-    'price' => '10999', 
-    'image' => 'img/lot-1.jpg'
-    ], 
-    [
-    'itemsname' => 'DC Ply Mens 2016/2017 Snowboard',
-    'category' =>'Доски и лыжи',
-    'price' => '159999', 
-    'image' => 'img/lot-2.jpg'
-    ], 
-    [
-    'itemsname' => 'Крепления Union Contact Pro 2015 года размер L/XL',
-    'category' => 'Крепления',
-    'price' => '8000',
-    'image' => 'img/lot-3.jpg'
-     ],
-    [
-    'itemsname' => 'Ботинки для сноуборда DC Mutiny Charocal',
-    'category' => 'Ботинки',
-    'price' => '10999',
-    'image' => 'img/lot-4.jpg'
-     ], 
-    [
-    'itemsname' => 'Куртка для сноуборда DC Mutiny Charocal',
-    'category' => 'Одежда',
-    'price' => '7500', 
-    'image' => 'img/lot-5.jpg'
-    ],
-    [
-    'itemsname' => 'Маска Oakley Canopy',
-    'category' => 'Разное',
-    'price' => '5400', 
-    'image' => 'img/lot-6.jpg'
->>>>>>> 6a0f07f5651174d805b9d5ddc77ee1aca9c5855c
-    ]
-];
+function convertTime($time_lot) {
+  $now = time();
+  if ($now - $time_lot < 86400) {  
+      if ($now - $time_lot < 3600 * 24 and $now - $time_lot < 3600) {   
+        return intval(date('i', $time_lot)).' минут назад';
+      } elseif ($now - $time_lot < 3600 * 24 and $now - $time_lot > 3600) {
+        return date('G'.' часов назад', $time_lot);
+      } else {
+        return 'Час назад';  
+      }
+ } else {
+     return date('d.m.y '.'в'.' H:i', $time_lot);
+   }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Главная</title>
+    <title>DC Ply Mens 2016/2017 Snowboard</title>
     <link href="css/normalize.min.css" rel="stylesheet">
     <link href="css/style.css" rel="stylesheet">
 </head>
@@ -116,116 +38,116 @@ $items = [
 <header class="main-header">
     <div class="main-header__container container">
         <h1 class="visually-hidden">YetiCave</h1>
-        <a class="main-header__logo">
+        <a class="main-header__logo" href="index.html">
             <img src="img/logo.svg" width="160" height="39" alt="Логотип компании YetiCave">
         </a>
         <form class="main-header__search" method="get" action="https://echo.htmlacademy.ru">
             <input type="search" name="search" placeholder="Поиск лота">
             <input class="main-header__search-btn" type="submit" name="find" value="Найти">
         </form>
-        <a class="main-header__add-lot button" href="add-lot.html">Добавить лот</a>
-
+        <a class="main-header__add-lot button" href="">Добавить лот</a>
         <nav class="user-menu">
-            <div class="user-menu__image">
-                <img src="img/user.jpg" width="40" height="40" alt="Пользователь">
-            </div>
-            <div class="user-menu__logged">
-                <p>Константин</p>
-                <a href="#">Выйти</a>
-            </div>
+            <ul class="user-menu__list">
+                <li class="user-menu__item">
+                    <a href="">Регистрация</a>
+                </li>
+                <li class="user-menu__item">
+                    <a href="#">Вход</a>
+                </li>
+            </ul>
         </nav>
     </div>
 </header>
 
-<main class="container">
-    <section class="promo">
-        <h2 class="promo__title">Нужен стафф для катки?</h2>
-        <p class="promo__text">На нашем интернет-аукционе ты найдёшь самое эксклюзивное сноубордическое и горнолыжное снаряжение.</p>
-        <ul class="promo__list">
-            <li class="promo__item promo__item--boards">
-                <a class="promo__link" href="all-lots.html">Доски и лыжи</a>
+<main>
+    <nav class="nav">
+        <ul class="nav__list container">
+            <li class="nav__item">
+                <a href="">Доски и лыжи</a>
             </li>
-            <li class="promo__item promo__item--attachment">
-                <a class="promo__link" href="all-lots.html">Крепления</a>
+            <li class="nav__item">
+                <a href="">Крепления</a>
             </li>
-            <li class="promo__item promo__item--boots">
-                <a class="promo__link" href="all-lots.html">Ботинки</a>
+            <li class="nav__item">
+                <a href="">Ботинки</a>
             </li>
-            <li class="promo__item promo__item--clothing">
-                <a class="promo__link" href="all-lots.html">Одежда</a>
+            <li class="nav__item">
+                <a href="">Одежда</a>
             </li>
-            <li class="promo__item promo__item--tools">
-                <a class="promo__link" href="all-lots.html">Инструменты</a>
+            <li class="nav__item">
+                <a href="">Инструменты</a>
             </li>
-            <li class="promo__item promo__item--other">
-                <a class="promo__link" href="all-lots.html">Разное</a>
+            <li class="nav__item">
+                <a href="">Разное</a>
             </li>
         </ul>
-    </section>
-    <section class="lots">
-        <div class="lots__header">
-            <h2>Открытые лоты</h2>
-            <select class="lots__select">
-            <option>Все категории</option>
-<<<<<<< HEAD
-                <?php foreach ($product_category as $category):?>
-                <option><?=$category;?></option> 
-               <?php endforeach;?> 
-            </select>
-        </div>
-        <ul class="lots__list">
-           <?php foreach  ($items as $item):?>
-            <li class="lots__item lot">
-               
-                <div class="lot__image">
-                    <img src="<?=$item['image'];?>" width="350" height="260" alt="Сноуборд">
+    </nav>
+    <section class="lot-item container">
+        <h2>DC Ply Mens 2016/2017 Snowboard</h2>
+        <div class="lot-item__content">
+            <div class="lot-item__left">
+                <div class="lot-item__image">
+                    <img src="img/lot-image.jpg" width="730" height="548" alt="Сноуборд">
                 </div>
-                <div class="lot__info">
-                    <span class="lot__category"><?=$item['category'];?></span>
-                    <h3 class="lot__title"><a class="text-link" href="#"><?=$item['itemsname'];?></a></h3>
-                    <div class="lot__state">
-                        <div class="lot__rate">
-                            <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?=$item['price'];?><b class="rub">р</b></span>
-=======
-                <?php foreach ($product_category as $value): ?>
-                <option><?=$value; ?></option> 
-               <?php endforeach; ?> 
-                
-                     
-            </select>
-        </div>
-        <ul class="lots__list">
-           <?php foreach  ($items as $val):?>
-            <li class="lots__item lot">
-               
-                <div class="lot__image">
-                    <img src="<?=$val['image'];?>" width="350" height="260" alt="Сноуборд">
-                </div>
-                <div class="lot__info">
-                    <span class="lot__category"><?=$val['category'];?></span>
-                    <h3 class="lot__title"><a class="text-link" href="#"><?=$val['itemsname'];?></a></h3>
-                    <div class="lot__state">
-                        <div class="lot__rate">
-                            <span class="lot__amount">Стартовая цена</span>
-                            <span class="lot__cost"><?=$val['price'];?><b class="rub">р</b></span>
->>>>>>> 6a0f07f5651174d805b9d5ddc77ee1aca9c5855c
+                <p class="lot-item__category">Категория: <span>Доски и лыжи</span></p>
+                <p class="lot-item__description">Легкий маневренный сноуборд, готовый дать жару в любом парке, растопив
+                    снег
+                    мощным щелчкоми четкими дугами. Стекловолокно Bi-Ax, уложенное в двух направлениях, наделяет этот
+                    снаряд
+                    отличной гибкостью и отзывчивостью, а симметричная геометрия в сочетании с классическим прогибом
+                    кэмбер
+                    позволит уверенно держать высокие скорости. А если к концу катального дня сил совсем не останется,
+                    просто
+                    посмотрите на Вашу доску и улыбнитесь, крутая графика от Шона Кливера еще никого не оставляла
+                    равнодушным.</p>
+            </div>
+            <div class="lot-item__right">
+                <div class="lot-item__state">
+                    <div class="lot-item__timer timer">
+                        10:54:12
+                    </div>
+                    <div class="lot-item__cost-state">
+                        <div class="lot-item__rate">
+                            <span class="lot-item__amount">Текущая цена</span>
+                            <span class="lot-item__cost">11 500</span>
                         </div>
-                        <div class="lot__timer timer">
-                            <?=$lot_time_remaining;?>
+                        <div class="lot-item__min-cost">
+                            Мин. ставка <span>12 000 р</span>
                         </div>
                     </div>
+                    <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post">
+                        <p class="lot-item__form-item">
+                            <label for="cost">Ваша ставка</label>
+                            <input id="cost" type="number" name="cost" placeholder="12 000">
+                        </p>
+                        <button type="submit" class="button">Сделать ставку</button>
+                    </form>
                 </div>
-            </li>
-<<<<<<< HEAD
-<?php endforeach;?> 
-=======
-<?php endforeach; ?> 
->>>>>>> 6a0f07f5651174d805b9d5ddc77ee1aca9c5855c
-
-</ul>
- 
-            
+                <div class="history">
+                    <h3>История ставок (<span>4</span>)</h3>
+                   <?php
+                    foreach ($bets as $k => $v) {
+                   ?>
+                    <!-- заполните эту таблицу данными из массива $bets-->
+                    <table class="history__list">
+                        <tr class="history__item">
+                            <td class="history__name"><?=$v['name'];?><!-- имя автора--></td>
+                            <td class="history__price"><?=$v['price'].' p';?><!-- цена--></td>
+                    <td class="history__time"><?=convertTime($v['ts']);?><!-- дата в человеческом формате--></td>
+                      
+                      <?php
+                      
+                    }
+                        ?>
+                        </tr>
+                    </table>
+                <?php
+                    
+                   ?>
+                
+                </div>
+            </div>
+        </div>
     </section>
 </main>
 
@@ -291,3 +213,4 @@ $items = [
 
 </body>
 </html>
+
