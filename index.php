@@ -82,9 +82,10 @@ $data = [$lot_time_remaining, $tomorrow, $now, $product_category, $items];
 connect_code('templates/header.php', $data);
 connect_code('templates/main.php',['product_category' => $product_category, 'category' => $items]);
 connect_code('templates/footer.php', '');
+ob_start();
 ?>
 
-
+$html = ob_get_clean();
 
 
 

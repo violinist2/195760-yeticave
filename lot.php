@@ -47,8 +47,10 @@ $data_lot = [$bets];
 connect_code('templates/header_lot.php', $data_lot);
 connect_code('templates/main_lot.php',['bets' => $bets]);
 connect_code('templates/footer_lot.php', '');
-?>
+ob_start();
 
+?>
+$html = ob_get_clean();
 
 
 
