@@ -10,7 +10,7 @@
 <?php
 include_once('functions.php');
 
-connect_code('templates/header.php', $data);
+connect_code('templates/header.php', '');
 connect_code('templates/main_lot.php', $bets);
 connect_code('templates/footer.php', '');
 ?>
