@@ -1,17 +1,3 @@
-<?php
-
-// ставки пользователей, которыми надо заполнить таблицу//lot.php
-
-$bets = [
-    ['name' => 'Иван', 'price' => 11500, 'ts' => strtotime('-' . rand(1, 50) .' minute')],
-    ['name' => 'Константин', 'price' => 11000, 'ts' => strtotime('-' . rand(1, 18) .' hour')],
-    ['name' => 'Евгений', 'price' => 10500, 'ts' => strtotime('-' . rand(25, 50) .' hour')],
-    ['name' => 'Семён', 'price' => 10000, 'ts' => strtotime('last week')]
-];
-
-
-?>
-
 <main>
     <nav class="nav">
         <ul class="nav__list container">
@@ -79,7 +65,7 @@ $bets = [
                 <div class="history">
                     <h3>История ставок (<span>4</span>)</h3>
                    <?php
-                    foreach ($bets as $k => $v) {
+                    foreach ($data as $k => $v) {
                    ?>
                     <!-- заполните эту таблицу данными из массива $bets-->
                     <table class="history__list">
@@ -94,10 +80,6 @@ $bets = [
                         ?>
                         </tr>
                     </table>
-                <?php
-                    
-                   ?>
-                
                 </div>
             </div>
         </div>
