@@ -1,3 +1,11 @@
+<?php 
+require_once 'massive.php';
+$id = htmlspecialchars(strip_tags(trim($_GET['id'])));
+if ($items[$id]=="") {
+   header("Location: /", true, 404);
+   exit(); 
+}
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -8,10 +16,10 @@
 </head>
 <body>
 <?php
-include_once('functions.php');
+require_once 'functions.php';
 
 connect_code('templates/header.php', '');
-connect_code('templates/main_lot.php', $bets);
+connect_code('templates/main_lot.php', [$bets, $items[$id]]);
 connect_code('templates/footer.php', '');
 ?>
 </body>
