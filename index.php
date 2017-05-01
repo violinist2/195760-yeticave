@@ -8,8 +8,8 @@
 </head>
 <body>
 <?php
-include_once('functions.php');
-
+require_once 'functions.php';
+require_once 'massive.php';
 connect_code('templates/header.php', ''); 
 connect_code('templates/main.php', [$product_category, $items, $lot_time_remaining]);
 connect_code('templates/footer.php', '');
