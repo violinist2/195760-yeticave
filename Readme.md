@@ -1,7 +1,7 @@
 # Личный проект «YetiCave» 
 
 * Студент: [Ekaterina Tsvetaeva](https://up.htmlacademy.ru/php/1/user/195760).
-* Наставник: `Павел Кузнецов`.
+* Наставник: `Николай Пойманов`.
 
 ---
 
