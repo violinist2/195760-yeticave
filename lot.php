@@ -1,6 +1,7 @@
 <?php 
 require_once 'massive.php';
-$id = htmlspecialchars(strip_tags(trim($_GET['id'])));
+require_once 'functions.php';
+$id = protect_code($_GET['id']);
 if ($items[$id]=="") {
    header("Location: /", true, 404);
    exit(); 
@@ -16,10 +17,11 @@ if ($items[$id]=="") {
 </head>
 <body>
 <?php
-require_once 'functions.php';
+$users = is_authorized();
+if (!empty($users)) $is_auth = true;
 
-connect_code('templates/header.php', '');
-connect_code('templates/main_lot.php', [$bets, $items[$id]]);
+connect_code('templates/header.php', [$users, $is_auth]);
+connect_code('templates/main_lot.php', [$bets, $items[$id], $is_auth]);
 connect_code('templates/footer.php', '');
 ?>
 </body>

@@ -8,10 +8,6 @@ $tomorrow = strtotime('tomorrow midnight');
 $now = time();
 $lot_time_remaining = date('H:i' ,$tomorrow - $now - 3600 * 3);
 
-$is_auth = (bool) rand(0, 1);
-$user_name = 'Константин';
-$user_avatar = 'img/user.jpg';
-
 $product_category = [
     'Доски и лыжи', 
     'Крепления', 
@@ -48,6 +44,18 @@ function connect_code($address, $data) {
         require_once $address;
     } else { 
         return '';
+    }
+}
+
+function protect_code($in_data) {
+    return htmlspecialchars(strip_tags(trim($in_data)));
+}
+
+function is_authorized() {
+    if (isset($_COOKIE['authorized_user'])) {
+        $auth_user = protect_code($_COOKIE['authorized_user']); // защита, вдруг подлый юзер в кукис положил инъекцию
+        require_once 'userdata.php';
+        return $users[$auth_user];
     }
 }
 ?>
