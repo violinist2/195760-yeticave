@@ -1,3 +1,13 @@
+<?php
+require_once 'functions.php';
+$users = is_authorized();
+if (!empty($users)) {
+    $is_auth = true;
+  } else {
+    header('HTTP/1.1 403 incorrect user');
+    exit(); 
+  }
+?>
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -9,8 +19,7 @@
 <body>
 
 <?php
-require_once 'functions.php';
-connect_code('templates/header.php', ''); 
+connect_code('templates/header.php', [$users, $is_auth]);  
 
 if (isset($_FILES['photo'])) {
   $file = $_FILES['photo'];
@@ -20,14 +29,13 @@ if (isset($_FILES['photo'])) {
 
 if ($file['name']=="") $fileto = "";
 
-// if (isset($_POST)) echo "Форма отправлена!"; эта проверка не работает корректно почему-то и вообще не проверяется isset
-
-$_POST['lot-name'] = htmlspecialchars(strip_tags(trim($_POST['lot-name'])));
-$_POST['category'] = htmlspecialchars(strip_tags(trim($_POST['category'])));
-$_POST['message'] = htmlspecialchars(strip_tags(trim($_POST['message'])));
-$_POST['lot-rate'] = htmlspecialchars(strip_tags(trim($_POST['lot-rate'])));
-$_POST['lot-step'] = htmlspecialchars(strip_tags(trim($_POST['lot-step'])));
-$_POST['lot-date'] = htmlspecialchars(strip_tags(trim($_POST['lot-date'])));
+$_POST['form-sent'] = protect_code($_POST['form-sent']);
+$_POST['lot-name'] = protect_code($_POST['lot-name']);
+$_POST['category'] = protect_code($_POST['category']);
+$_POST['message'] = protect_code($_POST['message']);
+$_POST['lot-rate'] = protect_code($_POST['lot-rate']);
+$_POST['lot-step'] = protect_code($_POST['lot-step']);
+$_POST['lot-date'] = protect_code($_POST['lot-date']);
 
 if (!is_numeric($_POST['lot-rate'])) {
   $_POST['lot-rate'] = "";
@@ -37,8 +45,17 @@ if (!is_numeric($_POST['lot-step'])) {
   $_POST['lot-step'] = "";
 }
 
-if (($_POST['lot-name']=='') or ($_POST['category']=='Выберите категорию') or ($_POST['lot-rate']=='') or ($_POST['message']=='') or ($_POST['lot-step']=='') or ($_POST['lot-date']=='') or ($fileto=='')) {
-  connect_code('templates/add_form.php', ['form-sent' => $_POST['form-sent'], 'file' => $fileto, 'lot-name' => $_POST['lot-name'], 'category' => $_POST['category'], 'lot-rate' => $_POST['lot-rate'], 'message' => $_POST['message'], 'photo' => $_POST['photo'], 'lot-step' => $_POST['lot-step'], 'lot-date' => $_POST['lot-date']]); 
+if (($_POST['lot-name']=='') || ($_POST['category']=='Выберите категорию') || ($_POST['lot-rate']=='') || ($_POST['message']=='') || ($_POST['lot-step']=='') || ($_POST['lot-date']=='') || ($fileto=='')) {
+  connect_code('templates/add_form.php',
+    ['form-sent' => $_POST['form-sent'],
+    'file' => $fileto,
+    'lot-name' => $_POST['lot-name'],
+    'category' => $_POST['category'],
+    'lot-rate' => $_POST['lot-rate'],
+    'message' => $_POST['message'],
+    'photo' => $_POST['photo'],
+    'lot-step' => $_POST['lot-step'],
+    'lot-date' => $_POST['lot-date']]); 
 } else {
   $items = [
         'itemsname' => $_POST['lot-name'],

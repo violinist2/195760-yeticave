@@ -1,6 +1,7 @@
 <?php
 $bets = $data[0];
 $items = $data[1];
+$is_auth = $data[2];
 ?>
 <main>
     <nav class="nav">
@@ -45,6 +46,7 @@ $items = $data[1];
                     равнодушным.</p>
             </div>
             <div class="lot-item__right">
+                <?php if ($is_auth): ?>
                 <div class="lot-item__state">
                     <div class="lot-item__timer timer">
                         10:54:12
@@ -66,6 +68,7 @@ $items = $data[1];
                         <button type="submit" class="button">Сделать ставку</button>
                     </form>
                 </div>
+                <?php endif; ?>
                 <div class="history">
                     <h3>История ставок (<span>4</span>)</h3>
                    <?php
