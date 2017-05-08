@@ -1,7 +1,6 @@
 <?php
 date_default_timezone_set('Europe/Moscow');
 // записать в эту переменную оставшееся время в этом формате (ЧЧ:ММ)
-// записать в эту переменную оставшееся время в этом формате (ЧЧ:ММ)
 $lot_time_remaining = "00:00";
 // временная метка для полночи следующего дня
 $tomorrow = strtotime('tomorrow midnight');
@@ -58,17 +57,5 @@ function is_authorized() {
         require_once 'userdata.php';
         return $users[$auth_user];
     }
-}
-
-function bet_save($cost, $lot_id) {
-    if (!empty($_COOKIE['mybets'])) $mybets = json_decode($_COOKIE['mybets'], true); // если уже были ставки, читаем массив с ними, чтобы дописать туда
-    $mybets[$lot_id] = ['cost' => $cost, 'time' => time()];
-    $expire =  time()+86400*30; // хранить 30 суток, в задании не конкретизировано
-    setcookie('mybets', json_encode($mybets), $expire, '/');
-}
-
-function bet_check($lot_id) { // проверка, хранится ли ставка по лоту
-    $mybets = json_decode($_COOKIE['mybets'], true);
-    if (isset($mybets[$lot_id])) return true;
 }
 ?>
