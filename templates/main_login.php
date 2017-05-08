@@ -1,3 +1,8 @@
+<?php
+// echo '<pre>';
+// print_r($data);
+// echo '</pre>';
+?>
 <main>
   <nav class="nav">
     <ul class="nav__list container">

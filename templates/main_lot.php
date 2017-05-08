@@ -2,7 +2,6 @@
 $bets = $data[0];
 $items = $data[1];
 $is_auth = $data[2];
-$id = $data[3];
 ?>
 <main>
     <nav class="nav">
@@ -47,7 +46,7 @@ $id = $data[3];
                     равнодушным.</p>
             </div>
             <div class="lot-item__right">
-                <?php if ($is_auth and (empty(bet_check($id)))): ?>
+                <?php if ($is_auth): ?>
                 <div class="lot-item__state">
                     <div class="lot-item__timer timer">
                         10:54:12
@@ -61,12 +60,12 @@ $id = $data[3];
                             Мин. ставка <span>12 000 р</span>
                         </div>
                     </div>
-                    <form class="lot-item__form" action="lot.php?id=<?=$id; ?>" method="post">
+                    <form class="lot-item__form" action="https://echo.htmlacademy.ru" method="post">
                         <p class="lot-item__form-item">
                             <label for="cost">Ваша ставка</label>
                             <input id="cost" type="number" name="cost" placeholder="12 000">
                         </p>
-                        <button type="submit" class="button" name="form-sent" value="1">Сделать ставку</button>
+                        <button type="submit" class="button">Сделать ставку</button>
                     </form>
                 </div>
                 <?php endif; ?>
