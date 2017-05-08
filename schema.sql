@@ -22,12 +22,13 @@ CREATE TABLE IF NOT EXISTS `bets` (
   `bet_amount` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
+  `date_betmade` datetime NOT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `item_id` (`item_id`),
   CONSTRAINT `bets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `bets_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Ставки пользователей по лотам';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='Ставки пользователей по лотам';
 
 -- Экспортируемые данные не выделены.
 -- Дамп структуры для таблица 195760-yeticave.categories
