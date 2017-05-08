@@ -1,6 +1,7 @@
 <?php
 date_default_timezone_set('Europe/Moscow');
 // записать в эту переменную оставшееся время в этом формате (ЧЧ:ММ)
+// записать в эту переменную оставшееся время в этом формате (ЧЧ:ММ)
 $lot_time_remaining = "00:00";
 // временная метка для полночи следующего дня
 $tomorrow = strtotime('tomorrow midnight');
