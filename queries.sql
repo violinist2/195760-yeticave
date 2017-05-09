@@ -21,7 +21,7 @@ user_author_id = '3', category_id = '1';
 UPDATE items SET item_name = 'Маска Oakley Canopy розовая со стразами' WHERE id = '6';
 
 -- добавить новую ставку для лота;
-INSERT INTO bets SET id = NULL, bet_amount = '10900', user_id = '2', item_id = '5';
+INSERT INTO bets SET id = NULL, bet_amount = '10900', user_id = '2', item_id = '5', date_betmade = NOW();
 
 -- получить список ставок для лота по его идентификатору.
 SELECT * FROM bets WHERE item_id = '1';
