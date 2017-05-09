@@ -70,4 +70,52 @@ function bet_check($lot_id) { // проверка, хранится ли ста�
     $mybets = json_decode($_COOKIE['mybets'], true);
     if (isset($mybets[$lot_id])) return true;
 }
+
+require_once('mysql_helper.php');
+
+function connect_data() {
+    $connection = mysqli_connect("localhost", "root", "", "195760-yeticave");
+    if ($connection == false) {
+        print("Ошибка подключения: " . mysqli_connect_error());
+    } else {
+       return $connection;
+    }
+}
+
+function select_data($connection, $sql, $arguments) {
+    $stmt = db_get_prepare_stmt($connection, $sql, $arguments);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    mysqli_stmt_close($stmt);
+    $data = mysqli_fetch_all($result, MYSQLI_NUM);
+    mysqli_close($connection);
+    return $data;
+}
+
+function insert_data($connection, $sql, $arguments) {
+    $stmt = db_get_prepare_stmt($connection, $sql, $arguments);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    $result = mysqli_stmt_insert_id($stmt); 
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);
+    return $result;    
+}
+
+function update_data($connection, $table, $changes_data, $conditions_data) {
+    $sql = "UPDATE ".$table." SET ";
+    foreach ($changes_data as $key => $value) {
+        $arguments[] = $changes_data[$key][key($value)];
+        $sql .= key($value)." = ?";
+        if ($key < count($changes_data) - 1) $sql .= ", ";
+    }
+    $sql .= " WHERE ".key($conditions_data)." = ?;";
+    $arguments[] = $conditions_data[key($conditions_data)];
+    $stmt = db_get_prepare_stmt($connection, $sql, $arguments);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_affected_rows($stmt);
+    mysqli_stmt_close($stmt);
+    mysqli_close($connection);   
+    return $result;    
+}
 ?>
