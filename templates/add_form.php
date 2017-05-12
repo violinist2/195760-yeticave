@@ -1,27 +1,19 @@
 <?php
 $error_text = "Заполните это поле!";
+// echo "<pre>";
+// print_r($data);
+// echo "</pre>";
+$categories = $data[0];
+$data = $data[1];
 ?>
 <main>
   <nav class="nav">
     <ul class="nav__list container">
-      <li class="nav__item">
-        <a href="all-lots.html">Доски и лыжи</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Крепления</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Ботинки</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Одежда</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Инструменты</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Разное</a>
-      </li>
+      <?php foreach ($categories as $category) { ?>
+        <li class="nav__item">
+          <a href="/catalog.php?category=<?=$category[0]; ?>"><?=$category[1]; ?></a>
+        </li>
+      <?php } ?>
     </ul>
   </nav>
   <form class="form form--add-lot container<?php if ($data['form-sent']==true) echo ' form--invalid'; ?>" action="add.php" method="post" enctype="multipart/form-data"> <!-- form--invalid -->

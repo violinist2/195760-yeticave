@@ -1,7 +1,3 @@
-<?php
-$users = $data[0];
-$is_auth = $data[1];
-?>
 <header class="main-header">
     <div class="main-header__container container">
         <h1 class="visually-hidden">YetiCave</h1>
@@ -15,18 +11,18 @@ $is_auth = $data[1];
         <a class="main-header__add-lot button" href="add.php">Добавить лот</a>
 
         <nav class="user-menu">
-            <?php if ($is_auth): ?>
+            <?php if ($data): ?>
             <div class="user-menu__image">
-                <img src="img/user.jpg" width="40" height="40" alt="Пользователь">
+                <img src="<?=$data['auth_avatar_path']; ?>" width="40" height="40" alt="Пользователь">
             </div>
             <div class="user-menu__logged">
-                <p><?= $users['name']; ?></p>
+                <p><?=$data['auth_username']; ?></p>
                 <p><a href="logout.php">Выйти</a></p>
             </div>
           <?php else: ?> 
     <ul class="user-menu__list">
         <li class="user-menu__item">
-        <a href="#">Регистрация</a>
+        <a href="sign-up.php">Регистрация</a>
         </li>
         <li class="user-menu__item">
         <a href="login.php">Вход</a>

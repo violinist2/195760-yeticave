@@ -1,9 +1,9 @@
 <?php
+session_start();
 require_once 'functions.php';
-$users = is_authorized();
-if (!empty($users)) {
-    $is_auth = true;
-  } else {
+
+$userdata = is_authorized();
+if (empty($userdata)) {
     header('HTTP/1.1 403 incorrect user');
     exit(); 
   }
@@ -19,7 +19,7 @@ if (!empty($users)) {
 <body>
 
 <?php
-connect_code('templates/header.php', [$users, $is_auth]);  
+connect_code('templates/header.php', $userdata);  
 
 if (isset($_FILES['photo'])) {
   $file = $_FILES['photo'];
@@ -45,9 +45,14 @@ if (!is_numeric($_POST['lot-step'])) {
   $_POST['lot-step'] = "";
 }
 
+$connection = connect_data();
+$sql = "SELECT * FROM categories ORDER BY id ASC;";
+$categories = select_data($connection, $sql, '');
+
 if (($_POST['lot-name']=='') || ($_POST['category']=='Выберите категорию') || ($_POST['lot-rate']=='') || ($_POST['message']=='') || ($_POST['lot-step']=='') || ($_POST['lot-date']=='') || ($fileto=='')) {
   connect_code('templates/add_form.php',
-    ['form-sent' => $_POST['form-sent'],
+    [$categories, 
+      ['form-sent' => $_POST['form-sent'],
     'file' => $fileto,
     'lot-name' => $_POST['lot-name'],
     'category' => $_POST['category'],
@@ -55,7 +60,7 @@ if (($_POST['lot-name']=='') || ($_POST['category']=='Выберите кате�
     'message' => $_POST['message'],
     'photo' => $_POST['photo'],
     'lot-step' => $_POST['lot-step'],
-    'lot-date' => $_POST['lot-date']]); 
+    'lot-date' => $_POST['lot-date']]]); 
 } else {
   $items = [
         'itemsname' => $_POST['lot-name'],
@@ -63,10 +68,10 @@ if (($_POST['lot-name']=='') || ($_POST['category']=='Выберите кате�
         'price' => $_POST['lot-rate'], 
         'image' => $fileto
         ]; 
-  connect_code('templates/main_lot.php', [$bets, $items]);
+  connect_code('templates/main_lot.php', [$categories, $items]); // потом разобраться, чтобы корректно отображал превью лота? или вообще это не нужно, если ок добавление
 }
 
-connect_code('templates/footer.php', ''); 
+connect_code('templates/footer.php', $categories); 
 ?>
 
 </body>
