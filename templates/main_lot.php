@@ -5,9 +5,6 @@ $userdata = $data[2];
 $item_data = $data[3];
 $cost = $data[4];
 $id = $data[5]; 
-// echo "<pre>";
-// print_r($item_data);
-// echo "</pre>";
 ?>
 <main>
     <nav class="nav">
@@ -30,7 +27,7 @@ $id = $data[5];
                 <p class="lot-item__description"><?=protect_code($item_data[1]); ?></p>
             </div>
             <div class="lot-item__right">
-                <?php if (!empty($userdata) and (empty(bet_check($id)))) { // заменить условие - блок не показывается, если время размещения кончилось ?>
+                <?php if (!empty($userdata) && (time()<convert_time_unix($item_data[7]))) { ?>
                 <div class="lot-item__state">
                     <div class="lot-item__timer timer">
                         10:54:12
@@ -48,7 +45,7 @@ $id = $data[5];
                     <form class="lot-item__form" action="lot.php?id=<?=$id; ?>" method="post">
                         <p class="lot-item__form-item">
                             <label for="cost">Ваша ставка</label>
-                            <input id="cost" type="number" name="cost" placeholder="<?=$cost[1]; ?>">
+                            <input id="cost" type="number" name="cost" placeholder="<?=$cost[1]; ?>" required>
                         </p>
                         <button type="submit" class="button" name="form-sent" value="1">Сделать ставку</button>
                     </form>

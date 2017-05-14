@@ -2,7 +2,7 @@
 -- Хост:                         127.0.0.1
 -- Версия сервера:               5.7.16 - MySQL Community Server (GPL)
 -- Операционная система:         Win32
--- HeidiSQL Версия:              9.4.0.5125
+-- HeidiSQL Версия:              9.4.0.5169
 -- --------------------------------------------------------
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
@@ -28,16 +28,17 @@ CREATE TABLE IF NOT EXISTS `bets` (
   KEY `item_id` (`item_id`),
   CONSTRAINT `bets_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `bets_ibfk_2` FOREIGN KEY (`item_id`) REFERENCES `items` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8 COMMENT='Ставки пользователей по лотам';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='Ставки пользователей по лотам';
 
 -- Экспортируемые данные не выделены.
 -- Дамп структуры для таблица 195760-yeticave.categories
 CREATE TABLE IF NOT EXISTS `categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `category_name` char(128) NOT NULL,
+  `image` char(128) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`category_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Категории товаров';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='Категории товаров';
 
 -- Экспортируемые данные не выделены.
 -- Дамп структуры для таблица 195760-yeticave.items
@@ -62,7 +63,7 @@ CREATE TABLE IF NOT EXISTS `items` (
   CONSTRAINT `items_ibfk_3` FOREIGN KEY (`user_author_id`) REFERENCES `users` (`id`),
   CONSTRAINT `items_ibfk_4` FOREIGN KEY (`user_winner_id`) REFERENCES `users` (`id`),
   CONSTRAINT `items_ibfk_5` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Лоты (товары) в продаже';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COMMENT='Лоты (товары) в продаже';
 
 -- Экспортируемые данные не выделены.
 -- Дамп структуры для таблица 195760-yeticave.users
@@ -76,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `users` (
   `contacts` text NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='Пользователи (аккаунты)';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8 COMMENT='Пользователи (аккаунты)';
 
 -- Экспортируемые данные не выделены.
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

@@ -15,7 +15,6 @@ ob_start();
   <link href="css/style.css" rel="stylesheet">
 </head>
 <body>
-
 <?php
 $connection = connect_data();
 $sql = "SELECT * FROM categories ORDER BY id ASC;";
@@ -56,6 +55,5 @@ if ($_POST['email']=='' || $_POST['password']=='') { // вывод формы с
 
 connect_code('templates/footer.php', $categories);
 ?>
-
 </body>
 </html>

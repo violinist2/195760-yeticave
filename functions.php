@@ -8,8 +8,12 @@ $tomorrow = strtotime('tomorrow midnight');
 $now = time();
 $lot_time_remaining = date('H:i' ,$tomorrow - $now - 3600 * 3);
 
+function convert_time_unix($in_time) {
+    return date_format(date_create_from_format('Y-m-d H:i:s', $in_time), U);
+}
+
 function convert_time($time_lot) {
-    $date = date_format(date_create_from_format('Y-m-d H:i:s', $time_lot), U);
+    $date = convert_time_unix($time_lot);
     $difference = time() - $date;
     if ($difference < 60*60*24) { // меньше суток
         if ($difference < 3600) return round($difference / 60).' минут назад'; // меньше  часа - минуты
@@ -50,10 +54,14 @@ function bet_save($cost, $user_id, $lot_id) {
     return $newbet;
 }
 
-function bet_check($lot_id) { // проверка, хранится ли ставка по лоту
-    // $mybets = json_decode($_COOKIE['mybets'], true);
-    // if (isset($mybets[$lot_id])) return true;
-    // временно отключаем
+function item_save($name, $description, $image, $rate, $finishdate, $step, $author, $category) {
+    $connection = connect_data();
+    $sql = "INSERT INTO items SET id = NULL, date_add = NOW(), item_name = ?, 
+    description = ?, image_path = ?, price_start = ?, date_end = ?, 
+    bet_step = ?, favorites_count = NULL, user_author_id = ?, 
+    user_winner_id = NULL, category_id = ?;";
+    $newitem = insert_data($connection, $sql, [$name, $description, $image, $rate, $finishdate, $step, $author, $category]);
+    return $newitem;
 }
 
 require_once('mysql_helper.php');
@@ -113,5 +121,13 @@ function email_used($email) {
         $result = select_data($connection, $sql, $arguments);
         return $result;
     }
+}
+
+function get_next_id($table) {
+    $table = protect_code($table);
+    $connection = connect_data();
+    $sql = "SELECT MAX(id) FROM $table;"; // похоже, не всегда +1 от максимального id == auto_increment, но пусть так
+    $result = select_data($connection, $sql, ''); // имя таблицы в виде подготовленного значения, к сожалению, передать не удаётся
+    return intval($result[0][0]) + 1;
 }
 ?>

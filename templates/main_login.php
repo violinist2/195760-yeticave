@@ -12,7 +12,7 @@ $data = $data[1];
       <?php } ?>
     </ul>
   </nav>
-  <form class="form container<?php if ($data['form-sent']==true) echo ' form--invalid'; ?>" action="login.php" method="post"> <!-- form--invalid -->
+  <form class="form container<?php if ($data['form-sent']==true) echo ' form--invalid'; ?>" action="login.php" method="post">
     <h2>Вход</h2>
     <?php if (protect_code($_SESSION['user']['new'])==TRUE) echo '<p>Теперь вы можете войти, используя свой email и пароль.</p>'; ?>
     <div class="form__item<?php if ($data['form-sent']==true and $data['email']=="") echo ' form__item--invalid'; ?>">

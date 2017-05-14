@@ -5,9 +5,6 @@ require_once 'functions.php';
 
 $form_errors = [];
 if ($_POST['form-sent']) {
-    echo "<pre>";
-    print_r($_FILES);
-    echo "</pre>";
     $_POST['email'] = protect_code($_POST['email']);
     $_POST['password'] = protect_code($_POST['password']);
     $_POST['name'] = protect_code($_POST['name']);
@@ -21,16 +18,23 @@ if ($_POST['form-sent']) {
     if (empty($_POST['password'])) $form_errors['password'] = 'Придумайте и укажите пароль.';
     if (empty($_POST['name'])) $form_errors['name'] = 'Укажите своё имя, оно будет отображаться на сайте.';
     if (empty($_POST['message'])) $form_errors['message'] = 'Нужно указать ваши контактные данные для покупателей.';
-    if (empty($form_errors)) { // если ошибок никаких нет
+    if (empty($form_errors)) { // если других ошибок нет - загрузка файла
         // загрузка аватара на сервер ведь должна происходить, если других ошибок формы нет?
-        if (isset($_FILES['avatar'])) {
-            // здесь будет проверка, является ли аватар изображением!
+        if ($_FILES['avatar']['error']=="0") { // если файл отправлен без ошибок (код ошибки 0)
             $file = $_FILES['avatar'];
-            $fileto = "img/users/".$file['name']; // а вдруг пользователь в название файла инъекцию умудрится записать? или вряд ли?
-            // !! менять имя согласно ID пользователя! и в лотах аналогично!
-            move_uploaded_file($file['tmp_name'], $fileto);
+            // а вдруг пользователь в название файла инъекцию умудрится записать? или вряд ли?
+            if ((mime_content_type($_FILES['avatar']['tmp_name'])=='image/jpeg') || (mime_content_type($_FILES['avatar']['tmp_name'])=='image/png') || (mime_content_type($_FILES['avatar']['tmp_name'])=='image/gif')) {
+                // проверка на формат пройдена
+                $fileto = "img/users/user".get_next_id('users').".".strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // даем файлу на сервер такое же имя, каким будет id, и прежнее расширение
+                move_uploaded_file($file['tmp_name'], $fileto);               
+            } else {
+                // неподходящий формат!
+                $form_errors['file'] = 'Для аватара принимаются изображения формата .JPG, .PNG или .GIF!';
+            }
         }
-        if ($file['name']=="") $fileto = ""; // если файла нет, пустая переменная для аватара
+    }
+    if (empty($form_errors)) { // если уже НИКАКИХ ошибок нет - регистрация
+        if ($file['name']=="") $fileto = ""; // если файла не было, пустая переменная для аватара
         // записываем пользователя в базу
         $password_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);// хэш пароля
         $connection = connect_data();
@@ -73,6 +77,5 @@ connect_code('templates/main_sign-up_form.php', [$categories, $form_errors, $for
 
 connect_code('templates/footer.php', $categories); 
 ?>
-
 </body>
 </html>
