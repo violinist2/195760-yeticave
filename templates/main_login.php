@@ -1,28 +1,20 @@
+<?php
+$categories = $data[0];
+$data = $data[1];
+?>
 <main>
   <nav class="nav">
     <ul class="nav__list container">
-      <li class="nav__item">
-        <a href="all-lots.html">Доски и лыжи</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Крепления</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Ботинки</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Одежда</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Инструменты</a>
-      </li>
-      <li class="nav__item">
-        <a href="all-lots.html">Разное</a>
-      </li>
+      <?php foreach ($categories as $category) { ?>
+        <li class="nav__item">
+          <a href="/catalog.php?category=<?=$category[0]; ?>"><?=$category[1]; ?></a>
+        </li>
+      <?php } ?>
     </ul>
   </nav>
-  <form class="form container<?php if ($data['form-sent']==true) echo ' form--invalid'; ?>" action="login.php" method="post"> <!-- form--invalid -->
+  <form class="form container<?php if ($data['form-sent']==true) echo ' form--invalid'; ?>" action="login.php" method="post">
     <h2>Вход</h2>
+    <?php if (protect_code($_SESSION['user']['new'])==TRUE) echo '<p>Теперь вы можете войти, используя свой email и пароль.</p>'; ?>
     <div class="form__item<?php if ($data['form-sent']==true and $data['email']=="") echo ' form__item--invalid'; ?>">
       <label for="email">E-mail*</label>
       <input id="email" type="text" name="email" placeholder="Введите e-mail" value="<?=$data['email']; ?>" required>

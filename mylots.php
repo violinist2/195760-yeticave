@@ -1,10 +1,8 @@
 <?php
-require_once 'massive.php';
+session_start();
 require_once 'functions.php';
-$users = is_authorized(); // проверка, вошёл ли пользователь. Лишнее?
-if (!empty($users)) {
-    $is_auth = true;
-  } else {
+$userdata = is_authorized();
+if (empty($userdata)) {
     header('HTTP/1.1 403 incorrect user');
     exit(); 
   }
@@ -19,12 +17,21 @@ if (!empty($users)) {
 </head>
 <body>
 <?php
-connect_code('templates/header.php', [$users, $is_auth]);  
+connect_code('templates/header.php', $userdata);  
 
-$mybets = json_decode($_COOKIE['mybets'], true);
-connect_code('templates/main_mylots.php', [$items, $mybets]);
+$connection = connect_data();
+$sql = "SELECT id, category_name FROM categories ORDER BY id ASC;";
+$categories = select_data($connection, $sql, '');
 
-connect_code('templates/footer.php', '');
+$connection = connect_data();
+$sql = "SELECT items.id, items.item_name, items.image_path, bets.bet_amount, 
+bets.date_betmade, categories.category_name FROM bets JOIN items 
+ON bets.item_id = items.id JOIN categories ON items.category_id = categories.id 
+WHERE bets.user_id = ? ORDER BY bets.date_betmade DESC;";
+$mybets = select_data($connection, $sql, [$userdata['auth_user_id']]);
+connect_code('templates/main_mylots.php', [$mybets, $categories]);
+
+connect_code('templates/footer.php', $categories);
 ?>
 </body>
 </html>
