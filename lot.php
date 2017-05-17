@@ -2,13 +2,17 @@
 session_start();
 ob_start();
 require_once 'functions.php';
+require_once 'classes/Database.php';
+require_once 'classes/Authorization.php';
+$database = new Database;
+$auth = new Authorization;
+
 $id = intval(protect_code($_GET['id']));
 
-$connection = connect_data();
 $sql = "SELECT items.item_name, items.description, items.image_path, categories.category_name, 
 items.price_start, items.user_author_id, items.bet_step, items.date_end FROM items JOIN categories 
 ON items.category_id = categories.id WHERE items.id = ?;";
-$item_data = select_data($connection, $sql, [$id]);
+$item_data = $database->selectData($sql, [$id]);
 
 if ($item_data==false) {
    header("Location: /", true, 404);
@@ -16,14 +20,13 @@ if ($item_data==false) {
 }
 $item_data = $item_data[0];
 
-$userdata = is_authorized();
+$userdata = $auth->getUserdata();
 connect_code('templates/header.php', $userdata); 
 
-$connection = connect_data();
 $sql = "SELECT users.username, bets.bet_amount, bets.date_betmade 
 FROM bets JOIN users ON bets.user_id = users.id 
 WHERE bets.item_id = ? ORDER BY bets.bet_amount DESC;";
-$bets = select_data($connection, $sql, [$id]); 
+$bets = $database->selectData($sql, [$id]); 
 
 if (empty($bets)) { // ставок нет, 
     $cost[0] = protect_code($item_data[4]); // текущая цена - стартовая
@@ -56,9 +59,8 @@ ob_end_flush();
 </head>
 <body>
 <?php
-$connection = connect_data();
 $sql = "SELECT id, category_name FROM categories ORDER BY id ASC;";
-$categories = select_data($connection, $sql, '');
+$categories = $database->selectData($sql, '');
 
 connect_code('templates/main_lot.php', [$categories, $bets, $userdata, $item_data, $cost, $id]);
 connect_code('templates/footer.php', $categories);

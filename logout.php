@@ -1,7 +1,7 @@
 <?php
 session_start();
-if (isset($_SESSION['user'])) {
-    unset($_SESSION['user']);
-}
+require_once 'classes/Authorization.php';
+$auth = new Authorization;
+$auth->finishAuthorization();
 header("Location: /");
 ?>
