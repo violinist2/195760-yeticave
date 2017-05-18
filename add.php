@@ -2,12 +2,16 @@
 session_start();
 ob_start;
 require_once 'functions.php';
+require_once 'classes/Database.php';
+require_once 'classes/Authorization.php';
+$database = new Database;
+$auth = new Authorization;
 
-$userdata = is_authorized();
-if (empty($userdata)) {
+if (!$auth->isAuthorized()) {
     header('HTTP/1.1 403 incorrect user');
     exit(); 
-  }
+}
+$userdata = $auth->getUserdata();
 
 $form_errors = [];
 if ($_POST['form-sent']) { // если форма отправлена
@@ -81,9 +85,8 @@ ob_end_flush();
 <?php
 connect_code('templates/header.php', $userdata);  
 
-$connection = connect_data();
 $sql = "SELECT * FROM categories ORDER BY id ASC;";
-$categories = select_data($connection, $sql, '');
+$categories = $database->selectData($sql, '');
 
 if (empty($_POST['form-sent'])) { // если не была отправлена
   connect_code('templates/main_add_form.php', [$categories, '', '']);

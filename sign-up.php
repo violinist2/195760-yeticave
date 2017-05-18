@@ -2,6 +2,8 @@
 // session_start(); // будем считать, что на страницу регистрации может попасть только неавторизованный?
 ob_start();
 require_once 'functions.php';
+require_once 'classes/Database.php';
+$database = new Database;
 
 $form_errors = [];
 if ($_POST['form-sent']) {
@@ -37,9 +39,8 @@ if ($_POST['form-sent']) {
         if ($file['name']=="") $fileto = ""; // если файла не было, пустая переменная для аватара
         // записываем пользователя в базу
         $password_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);// хэш пароля
-        $connection = connect_data();
         $sql = "INSERT INTO users SET id = NULL, date_register = NOW(), email = ?, username = ?, password = ?, avatar_path = ?, contacts = ?;";
-        $insert = insert_data($connection, $sql, [$_POST['email'], $_POST['name'], $password_hash, $fileto, $_POST['message']]);
+        $insert = insertData($sql, [$_POST['email'], $_POST['name'], $password_hash, $fileto, $_POST['message']]);
         // добавить проверку, успешно ли записаны данные в базу? где и какое сообщение в случае ошибки добавления в базу показать?
         session_start();
         $_SESSION['user'] = ['new' => true]; // метка о новом пользователе пишется в сессию
@@ -62,9 +63,8 @@ ob_end_flush();
 <?php
 connect_code('templates/header.php', ''); // хедер для неавторизованного, ведь авторизованный на регистрацию не должен придти?
 
-$connection = connect_data();
 $sql = "SELECT * FROM categories ORDER BY id ASC;";
-$categories = select_data($connection, $sql, '');
+$categories = $database->selectData($sql, '');
 
 $form_olddata = [
     'email' => $_POST['email'],
