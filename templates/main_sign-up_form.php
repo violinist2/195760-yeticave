@@ -4,6 +4,7 @@ $form_errors = $data[1];
 $form_olddata = $data[2];
 ?>
 <main>
+  <?php if (!empty($form_errors['mysql'])) echo '<p>'.$form_errors['mysql'].'</p>'; ?>
   <nav class="nav">
     <ul class="nav__list container">
       <?php foreach ($categories as $category) { ?>
