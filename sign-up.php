@@ -40,12 +40,15 @@ if ($_POST['form-sent']) {
         // записываем пользователя в базу
         $password_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);// хэш пароля
         $sql = "INSERT INTO users SET id = NULL, date_register = NOW(), email = ?, username = ?, password = ?, avatar_path = ?, contacts = ?;";
-        $insert = insertData($sql, [$_POST['email'], $_POST['name'], $password_hash, $fileto, $_POST['message']]);
-        // добавить проверку, успешно ли записаны данные в базу? где и какое сообщение в случае ошибки добавления в базу показать?
-        session_start();
-        $_SESSION['user'] = ['new' => true]; // метка о новом пользователе пишется в сессию
-        header("Location: /login.php");
-        exit(); // сценарий закончен: регистрация успешна, перешли на логин с приветствием новому пользователю
+        $insert = $database->insertData($sql, [$_POST['email'], $_POST['name'], $password_hash, $fileto, $_POST['message']]);
+        if ($insert) { // если добавлено успешно
+            session_start();
+            $_SESSION['user'] = ['new' => true]; // метка о новом пользователе пишется в сессию
+            header("Location: /login.php");
+            exit(); // сценарий закончен: регистрация успешна, перешли на логин с приветствием новому пользователю
+        } else { // если ошибка базы
+            $form_errors['mysql'] = "Ошибка добавления в базу данных! Пожалуйста, обратитесь в службу поддержки.";
+        }
     }
 }
 

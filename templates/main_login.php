@@ -22,7 +22,7 @@ $data = $data[1];
     </div>
     <div class="form__item form__item--last<?php if ($data['form-sent']==true and ($data['password']=="" || $data['password_incorrect']==true)) echo ' form__item--invalid'; ?>">
       <label for="password">Пароль*</label>
-      <input id="password" type="text" name="password" placeholder="Введите пароль" value="<?=$data['password']; ?>" required>
+      <input id="password" type="password" name="password" placeholder="Введите пароль" value="<?=$data['password']; ?>" required>
       <span class="form__error"><?php if ($data['form-sent']==true and $data['password']=="") {
           echo 'Введите пароль';
         } elseif ($data['form-sent']==true and $data['password_incorrect']==true)  {
