@@ -5,6 +5,19 @@ require_once 'classes/Database.php';
 require_once 'classes/Authorization.php';
 $database = new Database;
 $auth = new Authorization;
+
+require_once 'classes/BaseRecord.php';
+require_once 'classes/CategoryRecord.php';
+require_once 'classes/BaseFinder.php';
+require_once 'classes/CategoryFinder.php';
+$connection = $database->connectData();
+$category = new CategoryRecord($connection);
+
+$sql = "SELECT * FROM categories ORDER BY id ASC;";
+$categories = $category->select($sql, '');
+// echo "<pre>";
+// print_r($categories);
+// echo "</pre>";
 ?>
 <!DOCTYPE html>
 <html lang="ru">

@@ -1,8 +1,8 @@
 <?php
 
-class UserFinder extends BaseFinder {
+class CategoryFinder extends BaseFinder {
 
-    public function getActiveUsers() {
+    public function getCategories() {
         // Наверное, он должен здесь что-то делать
     }
 }

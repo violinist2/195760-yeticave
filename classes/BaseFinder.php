@@ -1,18 +1,12 @@
 <?php
 
-/**
- * Вот тут уже вообще ничего не понятно, какой-то отдельный класс-файндер (чего и куда)
- *
- * @param $tableName string Видимо, имя таблицы
- * @param $dbInstance object Объект, который надо как-то откуда-то подключить
- */
-class BaseFinder {
+abstract class BaseFinder {
 
     private $tableName;
     private $dbInstance;
 
     public function __construct($dbInstance) {
-        // и что здесь?
+        $this->dbInstance = $dbInstance;
     }
 
     public function findByID($id) {
@@ -20,7 +14,12 @@ class BaseFinder {
     }
 
     public function findAllBy($where) {
-        // и что здесь?
+        $stmt = db_get_prepare_stmt($this->dbInstance, "SELECT * FROM ".$this->tableName." ORDER BY id ASC;", '');
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        mysqli_stmt_close($stmt);
+        $data = mysqli_fetch_all($result, MYSQLI_NUM);
+        return $data;
     }
 }
 ?>
