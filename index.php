@@ -11,13 +11,12 @@ require_once 'classes/CategoryRecord.php';
 require_once 'classes/BaseFinder.php';
 require_once 'classes/CategoryFinder.php';
 $connection = $database->connectData();
-$category = new CategoryRecord($connection);
+$category = new CategoryFinder($connection);
 
-$sql = "SELECT * FROM categories ORDER BY id ASC;";
-$categories = $category->select($sql, '');
-// echo "<pre>";
-// print_r($categories);
-// echo "</pre>";
+$categories = $category->getCategories();
+echo "<pre>";
+print_r($categories);
+echo "</pre>";
 ?>
 <!DOCTYPE html>
 <html lang="ru">

@@ -19,7 +19,8 @@ abstract class BaseRecord {
         // ерунда какая-то, но вроде так
     }
 
-    public function select($sql, $arguments) {
+    public function select($arguments) {
+        $sql = "SELECT * FROM " . $this->$tableName;
         $stmt = db_get_prepare_stmt($this->dbInstance, $sql, $arguments);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
@@ -37,8 +38,8 @@ abstract class BaseRecord {
         return $result; 
     }
 
-    public function update($sql, $arguments) {
-        $sql = "UPDATE ".$table." SET ";
+    public function update($arguments) {
+        $sql = "UPDATE ".$tableName." SET ";
         foreach ($changes_data as $key => $value) {
             $arguments[] = $changes_data[$key][key($value)];
             $sql .= key($value)." = ?";

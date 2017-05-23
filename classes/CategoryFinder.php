@@ -2,8 +2,15 @@
 
 class CategoryFinder extends BaseFinder {
 
+    private $tableName = "categories";
+
     public function getCategories() {
-        // Наверное, он должен здесь что-то делать
+        $stmt = db_get_prepare_stmt($this->dbInstance, "SELECT * FROM ".$this->tableName." ORDER BY id ASC;", '');
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        mysqli_stmt_close($stmt);
+        $data = mysqli_fetch_all($result, MYSQLI_NUM);
+        return $data;
     }
 }
 ?>

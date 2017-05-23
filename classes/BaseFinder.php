@@ -11,6 +11,8 @@ abstract class BaseFinder {
 
     public function findByID($id) {
         // и что здесь?
+        $stmt = db_get_prepare_stmt($this->dbInstance, "SELECT * FROM ". $this->tableName, ['id' => $id]);
+        //... и прочее
     }
 
     public function findAllBy($where) {
