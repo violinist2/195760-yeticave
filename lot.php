@@ -1,4 +1,4 @@
-<?php 
+<?php
 session_start();
 ob_start();
 require_once 'classes/Database.php';
@@ -18,16 +18,16 @@ $items = new ItemFinder($connection);
 $item_data = $items->getItemData($id);
 if ($item_data==false) {
    header("Location: /", true, 404);
-   exit(); 
+   exit();
 }
 $item_data = $item_data[0];
 
 $userdata = $auth->getUserdata();
-connect_code('templates/header.php', $userdata); 
+connect_code('templates/header.php', $userdata);
 
 $bet = new BetFinder($connection);
 $bets = $bet->getBetsByItem($id);
-if (empty($bets)) { // ставок нет, 
+if (empty($bets)) { // ставок нет,
     $cost[0] = protect_code($item_data[4]); // текущая цена - стартовая
     $cost[1] = $cost[0]; // можно купить по текущей цене (сделать ставку, равную текущей)
 } else {
@@ -43,7 +43,7 @@ if ($_POST['form-sent']) {
         $betdata = new BetRecord($connection); // здесь $connection есть
         $newbet = $betdata->betSave($_POST['cost'], $userdata['auth_user_id'], $id); // а здесь $connection уже куда-то пропадает...
         // здесь будет проверка на сохранение??
-        // header("Location: /lot.php?id=".$id); // редирект временно отключен
+        header("Location: /lot.php?id=".$id); // редирект временно отключен
         exit();
     }
 }

@@ -14,7 +14,7 @@ class BetRecord extends BaseRecord {
         $this->insert([
             ['bet_amount' => $bet_amount],
             ['user_id' => $user_id],
-            ['item' => $item_id],
+            ['item_id' => $item_id],
             ['date_betmade' => 'NOW()']
         ]);
     }
