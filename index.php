@@ -1,22 +1,12 @@
 <?php
 session_start();
-require_once 'functions.php';
 require_once 'classes/Database.php';
+require_once 'functions.php';
 require_once 'classes/Authorization.php';
-$database = new Database;
-$auth = new Authorization;
-
-require_once 'classes/BaseRecord.php';
-require_once 'classes/CategoryRecord.php';
 require_once 'classes/BaseFinder.php';
 require_once 'classes/CategoryFinder.php';
-$connection = $database->connectData();
-$category = new CategoryFinder($connection);
-
-$categories = $category->getCategories();
-echo "<pre>";
-print_r($categories);
-echo "</pre>";
+require_once 'classes/ItemFinder.php';
+$auth = new Authorization;
 ?>
 <!DOCTYPE html>
 <html lang="ru">
@@ -28,16 +18,14 @@ echo "</pre>";
 </head>
 <body>
 <?php
+$category = new CategoryFinder($connection);
+$categories = $category->getCategories();
+
 $userdata = $auth->getUserdata();
 connect_code('templates/header.php', $userdata); 
 
-$sql = "SELECT * FROM categories ORDER BY id ASC;";
-$categories = $database->selectData($sql, '');
-
-$sql = "SELECT items.id, items.item_name, items.price_start, items.image_path, categories.category_name
-FROM items JOIN categories ON items.category_id = categories.id
-WHERE items.date_end > NOW() ORDER BY items.date_end DESC;";
-$open_items = $database->selectData($sql, '');
+$items = new ItemFinder($connection);
+$open_items = $items->getOpenItems();
 connect_code('templates/main.php', [$categories, $open_items]);
 connect_code('templates/footer.php', $categories);
 ?>

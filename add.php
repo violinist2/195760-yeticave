@@ -1,10 +1,12 @@
 <?php
 session_start();
 ob_start;
-require_once 'functions.php';
 require_once 'classes/Database.php';
+require_once 'functions.php';
 require_once 'classes/Authorization.php';
-$database = new Database;
+require_once 'classes/BaseFinder.php';
+require_once 'classes/CategoryFinder.php';
+require_once 'classes/ItemFinder.php';
 $auth = new Authorization;
 
 if (!$auth->isAuthorized()) {
@@ -54,7 +56,8 @@ if ($_POST['form-sent']) { // если форма отправлена
     // а вдруг пользователь в название файла инъекцию умудрится записать? или вряд ли?
     if ((mime_content_type($_FILES['photo']['tmp_name'])=='image/jpeg') || (mime_content_type($_FILES['photo']['tmp_name'])=='image/png')) {
       // проверка на формат пройдена
-      $fileto = "img/users/item".get_next_id('items').".".strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // даем файлу на сервер такое же имя, каким будет id, и прежнее расширение
+      $nextitemid = new ItemFinder($connection);
+      $fileto = "img/users/item".$nextitemid->getNextId().".".strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // даем файлу на сервер такое же имя, каким будет id, и прежнее расширение
       move_uploaded_file($file['tmp_name'], $fileto);               
     } else { // неподходящий формат!
       $form_errors['file'] = 'Фото товара принимается в изображениях формата .JPG или .PNG!';
@@ -85,8 +88,8 @@ ob_end_flush();
 <?php
 connect_code('templates/header.php', $userdata);  
 
-$sql = "SELECT * FROM categories ORDER BY id ASC;";
-$categories = $database->selectData($sql, '');
+$category = new CategoryFinder($connection);
+$categories = $category->getCategories();
 
 if (empty($_POST['form-sent'])) { // если не была отправлена
   connect_code('templates/main_add_form.php', [$categories, '', '']);

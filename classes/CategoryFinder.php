@@ -2,7 +2,7 @@
 
 class CategoryFinder extends BaseFinder {
 
-    private $tableName = "categories";
+    public $tableName = "categories";
 
     public function getCategories() {
         $stmt = db_get_prepare_stmt($this->dbInstance, "SELECT * FROM ".$this->tableName." ORDER BY id ASC;", '');

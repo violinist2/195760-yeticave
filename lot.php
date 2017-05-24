@@ -1,19 +1,21 @@
 <?php 
 session_start();
 ob_start();
-require_once 'functions.php';
 require_once 'classes/Database.php';
+require_once 'functions.php';
 require_once 'classes/Authorization.php';
-$database = new Database;
+require_once 'classes/BaseFinder.php';
+require_once 'classes/CategoryFinder.php';
+require_once 'classes/ItemFinder.php';
+require_once 'classes/BetFinder.php';
+require_once 'classes/BaseRecord.php';
+require_once 'classes/BetRecord.php';
 $auth = new Authorization;
 
 $id = intval(protect_code($_GET['id']));
 
-$sql = "SELECT items.item_name, items.description, items.image_path, categories.category_name, 
-items.price_start, items.user_author_id, items.bet_step, items.date_end FROM items JOIN categories 
-ON items.category_id = categories.id WHERE items.id = ?;";
-$item_data = $database->selectData($sql, [$id]);
-
+$items = new ItemFinder($connection);
+$item_data = $items->getItemData($id);
 if ($item_data==false) {
    header("Location: /", true, 404);
    exit(); 
@@ -23,11 +25,8 @@ $item_data = $item_data[0];
 $userdata = $auth->getUserdata();
 connect_code('templates/header.php', $userdata); 
 
-$sql = "SELECT users.username, bets.bet_amount, bets.date_betmade 
-FROM bets JOIN users ON bets.user_id = users.id 
-WHERE bets.item_id = ? ORDER BY bets.bet_amount DESC;";
-$bets = $database->selectData($sql, [$id]); 
-
+$bet = new BetFinder($connection);
+$bets = $bet->getBetsByItem($id);
 if (empty($bets)) { // ставок нет, 
     $cost[0] = protect_code($item_data[4]); // текущая цена - стартовая
     $cost[1] = $cost[0]; // можно купить по текущей цене (сделать ставку, равную текущей)
@@ -41,9 +40,10 @@ if ($_POST['form-sent']) {
     // проверяем, все ли параметры введены и соответствуют: авторизация, ставка, целое ли число ставка, больше ли минимальной ставки
     if (!empty($userdata['auth_user_id']) && !empty($_POST['cost']) && (intval($_POST['cost'])>0) && intval($_POST['cost'])>=intval($cost[1])) {
         // не кончился ли лот тем временем - тоже надо проверить бы? в идеале?
-        $newbet = bet_save($_POST['cost'], $userdata['auth_user_id'], $id);
+        $betdata = new BetRecord($connection); // здесь $connection есть
+        $newbet = $betdata->betSave($_POST['cost'], $userdata['auth_user_id'], $id); // а здесь $connection уже куда-то пропадает...
         // здесь будет проверка на сохранение??
-        header("Location: /lot.php?id=".$id);
+        // header("Location: /lot.php?id=".$id); // редирект временно отключен
         exit();
     }
 }
@@ -59,8 +59,8 @@ ob_end_flush();
 </head>
 <body>
 <?php
-$sql = "SELECT id, category_name FROM categories ORDER BY id ASC;";
-$categories = $database->selectData($sql, '');
+$category = new CategoryFinder($connection);
+$categories = $category->getCategories();
 
 connect_code('templates/main_lot.php', [$categories, $bets, $userdata, $item_data, $cost, $id]);
 connect_code('templates/footer.php', $categories);

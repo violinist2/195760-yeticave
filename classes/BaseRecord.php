@@ -2,8 +2,8 @@
 
 abstract class BaseRecord {
 
-    private $tableName;
-    private $dbInstance;
+    public $tableName;
+    public $dbInstance;
 
     public function __construct($dbInstance) {
         $this->dbInstance = $dbInstance;
@@ -11,26 +11,21 @@ abstract class BaseRecord {
 
     public function __get($name) {
         return $this->$name;
-        // ерунда какая-то, но вроде так
     }
 
     public function __set($prop, $val) {
         $this->$prop = $val;
-        // ерунда какая-то, но вроде так
     }
 
-    public function select($arguments) {
-        $sql = "SELECT * FROM " . $this->$tableName;
-        $stmt = db_get_prepare_stmt($this->dbInstance, $sql, $arguments);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        mysqli_stmt_close($stmt);
-        $data = mysqli_fetch_all($result, MYSQLI_NUM);
-        return $data;
-    } 
-
-    public function insert($sql, $arguments) {
-        $stmt = db_get_prepare_stmt($this->dbInstance, $sql, $arguments);
+    public function insert($changes_data) { // вроде бы, всё ок, но не работает!
+        $sql = "INSERT INTO ".$this->tableName." SET id = NULL, "; 
+        foreach ($changes_data as $key => $value) {
+            $arguments[] = $changes_data[$key][key($value)];
+            $sql .= key($value)." = ?";
+            if ($key < count($changes_data) - 1) $sql .= ", ";
+        }
+        $sql .= ";";
+        $stmt = db_get_prepare_stmt($this->dbInstance, $sql, $arguments); // вот здесь почему-то исчезает соединение с базой. Почему???
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
         $result = mysqli_stmt_insert_id($stmt); 
@@ -38,7 +33,7 @@ abstract class BaseRecord {
         return $result; 
     }
 
-    public function update($arguments) {
+    public function update($arguments) { // пока в работе, не сделано
         $sql = "UPDATE ".$tableName." SET ";
         foreach ($changes_data as $key => $value) {
             $arguments[] = $changes_data[$key][key($value)];
@@ -55,7 +50,7 @@ abstract class BaseRecord {
     }
 
     public function delete($sql, $arguments) {
-        // это будет метод для удаления.. или уже не будет(
+        // это будет метод для удаления.. потом
     }          
 }
 ?>

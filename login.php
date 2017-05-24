@@ -1,9 +1,11 @@
 <?php 
 session_start();
-require_once 'functions.php';
 require_once 'classes/Database.php';
+require_once 'functions.php';
 require_once 'classes/Authorization.php';
-$database = new Database;
+require_once 'classes/BaseFinder.php';
+require_once 'classes/CategoryFinder.php';
+require_once 'classes/UserFinder.php';
 $auth = new Authorization;
 $_POST['form-sent'] = protect_code($_POST['form-sent']);
 $_POST['email'] = protect_code($_POST['email']);
@@ -20,8 +22,8 @@ ob_start();
 </head>
 <body>
 <?php
-$sql = "SELECT * FROM categories ORDER BY id ASC;";
-$categories = $database->selectData($sql, '');
+$category = new CategoryFinder($connection);
+$categories = $category->getCategories();
 
 if ($_POST['email']=='' || $_POST['password']=='') { // вывод формы с ошибкой ввода данных в форму (нет логина, пароля, или того и другого)
     ob_end_flush();
@@ -33,7 +35,7 @@ if ($_POST['email']=='' || $_POST['password']=='') { // вывод формы с
     'password_incorrect' => false
     ]]);
 } else { // если логин и пароль введены пользователем
-    if ($auth->doAuthorize($_POST['email'], $_POST['password'])) { // вход успешен
+    if ($auth->doAuthorize($_POST['email'], $_POST['password'], $connection)) { // вход успешен
         header("Location: /");
         exit(); // раз авторизация успешна, редиректим на главную и досрочно завершаем этот сценарий
     } else { // ошибка входа

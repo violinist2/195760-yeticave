@@ -8,6 +8,10 @@ $tomorrow = strtotime('tomorrow midnight');
 $now = time();
 $lot_time_remaining = date('H:i' ,$tomorrow - $now - 3600 * 3);
 
+$database = new Database;
+$connection = $database->connectData();
+require_once('mysql_helper.php');
+
 function convert_time_unix($in_time) {
     return date_format(date_create_from_format('Y-m-d H:i:s', $in_time), U);
 }
@@ -36,15 +40,7 @@ function protect_code($in_data) {
     return htmlspecialchars(strip_tags(trim($in_data)));
 }
 
-function bet_save($cost, $user_id, $lot_id) {
-    $database = new Database;
-    $sql = "INSERT INTO bets SET id = NULL, 
-    bet_amount = ?, user_id = ?, item_id = ?, date_betmade = NOW();";
-    $newbet = $database->insertData($sql, [$cost, $user_id, $lot_id]);
-    return $newbet;
-}
-
-function item_save($name, $description, $image, $rate, $finishdate, $step, $author, $category) {
+function item_save($name, $description, $image, $rate, $finishdate, $step, $author, $category) { // будет заменена методом класса
     $database = new Database;
     $sql = "INSERT INTO items SET id = NULL, date_add = NOW(), item_name = ?, 
     description = ?, image_path = ?, price_start = ?, date_end = ?, 
@@ -54,24 +50,11 @@ function item_save($name, $description, $image, $rate, $finishdate, $step, $auth
     return $newitem;
 }
 
-require_once('mysql_helper.php');
-
-function email_used($email) {
-    $email = protect_code($email);
+function email_used($email, $connection) { // в эту вспомогательную функцию приходится передавать соединение(
+    $email = protect_code($email, $connection);
     if (!empty($email)) {
-        $database = new Database;
-        $sql = "SELECT email FROM users WHERE email = ?;";
-        $arguments = [$email];
-        $result = $database->selectData($sql, $arguments);
-        return $result;
+        $emails = new UserFinder($connection);
+        return $emails->findAllBy('email', $email);
     }
-}
-
-function get_next_id($table) {
-    $database = new Database;
-    $table = protect_code($table);
-    $sql = "SELECT MAX(id) FROM $table;"; // похоже, не всегда +1 от максимального id == auto_increment, но пусть так
-    $result = $database->selectData($sql, ''); // имя таблицы в виде подготовленного значения, к сожалению, передать не удаётся
-    return intval($result[0][0]) + 1;
 }
 ?>

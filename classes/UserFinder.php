@@ -2,8 +2,10 @@
 
 class UserFinder extends BaseFinder {
 
+    public $tableName = "users";
+
     public function getActiveUsers() {
-        // Наверное, он должен здесь что-то делать
+        // Будет искать активных пользователей, если будет нужно
     }
 }
 ?>

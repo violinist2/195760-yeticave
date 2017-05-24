@@ -16,17 +16,6 @@ class Database {
         }
     }
 
-    public function selectData($sql, $arguments) {
-        $connection = $this->connectData();
-        $stmt = db_get_prepare_stmt($connection, $sql, $arguments);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        mysqli_stmt_close($stmt);
-        $data = mysqli_fetch_all($result, MYSQLI_NUM);
-        mysqli_close($connection);
-        return $data;
-    }
-
     public function insertData($sql, $arguments) {
         $connection = $this->connectData();
         $stmt = db_get_prepare_stmt($connection, $sql, $arguments);

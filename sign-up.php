@@ -1,9 +1,11 @@
 <?php
-// session_start(); // будем считать, что на страницу регистрации может попасть только неавторизованный?
+// на страницу регистрации может попасть только неавторизованный?
 ob_start();
-require_once 'functions.php';
 require_once 'classes/Database.php';
-$database = new Database;
+require_once 'functions.php';
+require_once 'classes/BaseFinder.php';
+require_once 'classes/CategoryFinder.php';
+require_once 'classes/UserFinder.php';
 
 $form_errors = [];
 if ($_POST['form-sent']) {
@@ -15,7 +17,7 @@ if ($_POST['form-sent']) {
     if (empty($_POST['email']) or (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL)==false)) { // если почта не указана или указана некорректно
         $form_errors['email'] = 'Введите корректный адрес электронной почты.';
     } else {
-        if (!empty(email_used($_POST['email']))) $form_errors['email'] = 'Этот адрес уже использован при регистрации на сайте.';
+        if (!empty(email_used($_POST['email'], $connection))) $form_errors['email'] = 'Этот адрес уже использован при регистрации на сайте.';
     }
     if (empty($_POST['password'])) $form_errors['password'] = 'Придумайте и укажите пароль.';
     if (empty($_POST['name'])) $form_errors['name'] = 'Укажите своё имя, оно будет отображаться на сайте.';
@@ -27,7 +29,8 @@ if ($_POST['form-sent']) {
             // а вдруг пользователь в название файла инъекцию умудрится записать? или вряд ли?
             if ((mime_content_type($_FILES['avatar']['tmp_name'])=='image/jpeg') || (mime_content_type($_FILES['avatar']['tmp_name'])=='image/png') || (mime_content_type($_FILES['avatar']['tmp_name'])=='image/gif')) {
                 // проверка на формат пройдена
-                $fileto = "img/users/user".get_next_id('users').".".strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // даем файлу на сервер такое же имя, каким будет id, и прежнее расширение
+                $nextuserid = new UserFinder($connection);
+                $fileto = "img/users/user".$nextuserid->getNextId().".".strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // даем файлу на сервер такое же имя, каким будет id, и прежнее расширение
                 move_uploaded_file($file['tmp_name'], $fileto);               
             } else {
                 // неподходящий формат!
@@ -66,8 +69,8 @@ ob_end_flush();
 <?php
 connect_code('templates/header.php', ''); // хедер для неавторизованного, ведь авторизованный на регистрацию не должен придти?
 
-$sql = "SELECT * FROM categories ORDER BY id ASC;";
-$categories = $database->selectData($sql, '');
+$category = new CategoryFinder($connection);
+$categories = $category->getCategories();
 
 $form_olddata = [
     'email' => $_POST['email'],
