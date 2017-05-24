@@ -1,4 +1,9 @@
 <?php
+
+ini_set("display_errors",1);
+error_reporting(E_ALL);
+
+
 session_start();
 ob_start();
 require_once 'classes/Database.php';
@@ -35,7 +40,7 @@ if (empty($bets)) { // ставок нет,
     $cost[1] = $cost[0] + protect_code($item_data[6]); // минимальная новая ставка = максимальная из поставленных + шаг ставки
 }
 
-if ($_POST['form-sent']) {
+if (isset($_POST['form-sent'])) {
     $_POST['cost'] = protect_code($_POST['cost']);
     // проверяем, все ли параметры введены и соответствуют: авторизация, ставка, целое ли число ставка, больше ли минимальной ставки
     if (!empty($userdata['auth_user_id']) && !empty($_POST['cost']) && (intval($_POST['cost'])>0) && intval($_POST['cost'])>=intval($cost[1])) {
@@ -43,6 +48,7 @@ if ($_POST['form-sent']) {
         $betdata = new BetRecord($connection); // здесь $connection есть
         $newbet = $betdata->betSave($_POST['cost'], $userdata['auth_user_id'], $id); // а здесь $connection уже куда-то пропадает...
         // здесь будет проверка на сохранение??
+
         header("Location: /lot.php?id=".$id); // редирект временно отключен
         exit();
     }

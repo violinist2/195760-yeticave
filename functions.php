@@ -13,7 +13,7 @@ $connection = $database->connectData();
 require_once('mysql_helper.php');
 
 function convert_time_unix($in_time) {
-    return date_format(date_create_from_format('Y-m-d H:i:s', $in_time), U);
+    return date_format(date_create_from_format('Y-m-d H:i:s', $in_time), 'U');
 }
 
 function convert_time($time_lot) {
@@ -31,7 +31,7 @@ function convert_time($time_lot) {
 function connect_code($address, $data) {
     if  (file_exists($address)) {
         require_once $address;
-    } else { 
+    } else {
         return '';
     }
 }
@@ -42,9 +42,9 @@ function protect_code($in_data) {
 
 function item_save($name, $description, $image, $rate, $finishdate, $step, $author, $category) { // будет заменена методом класса
     $database = new Database;
-    $sql = "INSERT INTO items SET id = NULL, date_add = NOW(), item_name = ?, 
-    description = ?, image_path = ?, price_start = ?, date_end = ?, 
-    bet_step = ?, favorites_count = NULL, user_author_id = ?, 
+    $sql = "INSERT INTO items SET id = NULL, date_add = NOW(), item_name = ?,
+    description = ?, image_path = ?, price_start = ?, date_end = ?,
+    bet_step = ?, favorites_count = NULL, user_author_id = ?,
     user_winner_id = NULL, category_id = ?;";
     $newitem = $database->insertData($sql, [$name, $description, $image, $rate, $finishdate, $step, $author, $category]);
     return $newitem;
