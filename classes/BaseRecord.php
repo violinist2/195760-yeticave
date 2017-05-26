@@ -4,14 +4,9 @@ abstract class BaseRecord {
 
     public $tableName;
     public $dbInstance;
-    private $mysql_server = "localhost";
-    private $mysql_user = "root";
-    private $mysql_password = "";
-    private $mysql_base = "195760-yeticave";
 
     public function __construct($dbInstance) {
-        $this->dbInstance = mysqli_connect($this->mysql_server, $this->mysql_user, $this->mysql_password, $this->mysql_base);
-        // временно прямое подключение
+        $this->dbInstance = $dbInstance;
     }
 
     public function __get($name) {
@@ -22,20 +17,26 @@ abstract class BaseRecord {
         $this->$prop = $val;
     }
 
-    public function insert($changes_data) { // вроде бы, всё ок, но не работает!
+    public function insert($changes_data) {
         $sql = "INSERT INTO ".$this->tableName." SET id = NULL, ";
         foreach ($changes_data as $key => $value) {
-            $arguments[] = $changes_data[$key][key($value)];
-            $sql .= key($value)." = ?";
+            if ($changes_data[$key][key($value)]=='') {
+                // mysql_helper не принимает в качестве значения параметра передачей из класса NULL ни в какой форме,
+                // поэтому его приходится исключением в запрос писать напрямую
+                // такая же недокументированная непонятность, что и с NOW()
+                $sql .= key($value)." = NULL";
+            } else {
+                $arguments[] = $changes_data[$key][key($value)];
+                $sql .= key($value)." = ?";
+            }
             if ($key < count($changes_data) - 1) $sql .= ", ";
         }
         $sql .= ";";
-        $stmt = db_get_prepare_stmt($this->dbInstance, $sql, $arguments); // вот здесь почему-то исчезает соединение с базой. Почему???
+        $stmt = db_get_prepare_stmt($this->dbInstance, $sql, $arguments);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
         $result = mysqli_stmt_insert_id($stmt);
         mysqli_stmt_close($stmt);
-        mysqli_close($this->dbInstance);
         return $result;
     }
 
@@ -52,7 +53,6 @@ abstract class BaseRecord {
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_affected_rows($stmt);
         mysqli_stmt_close($stmt);
-        mysqli_close($this->dbInstance);
         return $result;
     }
 

@@ -7,11 +7,13 @@ require_once 'classes/Authorization.php';
 require_once 'classes/BaseFinder.php';
 require_once 'classes/CategoryFinder.php';
 require_once 'classes/ItemFinder.php';
+require_once 'classes/BaseRecord.php';
+require_once 'classes/ItemRecord.php';
 $auth = new Authorization;
 
 if (!$auth->isAuthorized()) {
     header('HTTP/1.1 403 incorrect user');
-    exit(); 
+    exit();
 }
 $userdata = $auth->getUserdata();
 
@@ -27,7 +29,7 @@ if ($_POST['form-sent']) { // если форма отправлена
   if (!is_numeric($_POST['lot-rate'])) $_POST['lot-rate'] = "";
   if (!is_numeric($_POST['lot-step'])) $_POST['lot-step'] = "";
 
-  if (empty($_POST['lot-name'])) $form_errors['lot-name'] = 'Укажите название вашего лота!'; 
+  if (empty($_POST['lot-name'])) $form_errors['lot-name'] = 'Укажите название вашего лота!';
   if (empty($_POST['category'])) $form_errors['category'] = 'Обязательно нужно выбрать категорию!';
   if (empty($_POST['message'])) $form_errors['message'] = 'Укажите описание вашего товара!';
   if (empty($_POST['lot-rate'])) $form_errors['lot-rate'] = 'Укажите цену!';
@@ -58,20 +60,24 @@ if ($_POST['form-sent']) { // если форма отправлена
       // проверка на формат пройдена
       $nextitemid = new ItemFinder($connection);
       $fileto = "img/users/item".$nextitemid->getNextId().".".strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // даем файлу на сервер такое же имя, каким будет id, и прежнее расширение
-      move_uploaded_file($file['tmp_name'], $fileto);               
+      move_uploaded_file($file['tmp_name'], $fileto);
     } else { // неподходящий формат!
       $form_errors['file'] = 'Фото товара принимается в изображениях формата .JPG или .PNG!';
     }
   } else { // если файл забыли
     $form_errors['file'] = 'Добавьте фотографию вашего товара для объявления.';
   }
-  // здесь должны быть проверки параметров лота ещё? дата, отстоящая на какое-то время от текущей?
   if (empty($form_errors)) { // если уже НИКАКИХ ошибок нет - отработка добавления лота
     $_POST['lot-date'] = date_format(date_create_from_format('d.m.Y', $_POST['lot-date']), 'Y-m-d H:i:s'); // до того же времени в назначенный день завершения ведь?
-    $newitem = item_save($_POST['lot-name'], $_POST['message'], $fileto, $_POST['lot-rate'], $_POST['lot-date'], $_POST['lot-step'], $userdata['auth_user_id'], $_POST['category']);
-    header("Location: /lot.php?id=".$newitem);
-    exit();
-  }    
+    $itemrecord = new ItemRecord($connection);
+    $insert = $itemrecord->itemAdd($_POST['lot-name'], $_POST['message'], $fileto, $_POST['lot-rate'], $_POST['lot-date'], $_POST['lot-step'], $userdata['auth_user_id'], $_POST['category']);
+    if ($insert) { // если добавлено успешно
+        header("Location: /lot.php?id=".$insert);
+        exit(); // сценарий закончен: добавление успешно, перешли на свежедобавленный лот
+    } else { // если ошибка базы
+        $form_errors['mysql'] = "Ошибка добавления в базу данных! Пожалуйста, обратитесь в службу поддержки.";
+    }
+  }
 }
 ob_end_flush();
 ?>
@@ -86,7 +92,7 @@ ob_end_flush();
 <body>
 
 <?php
-connect_code('templates/header.php', $userdata);  
+connect_code('templates/header.php', $userdata);
 
 $category = new CategoryFinder($connection);
 $categories = $category->getCategories();
@@ -95,6 +101,7 @@ if (empty($_POST['form-sent'])) { // если не была отправлена
   connect_code('templates/main_add_form.php', [$categories, '', '']);
 } else { // если была отправлена
   if ($file['name']=="") $fileto = "";
+  // здесь можно было бы дату преобразовать обратно на случай ошибки mysql, надо?
   $form_olddata = [
     'file' => $fileto, // успешно загруженный файл, если был
     'lot-name' => $_POST['lot-name'],
@@ -108,7 +115,7 @@ if (empty($_POST['form-sent'])) { // если не была отправлена
   connect_code('templates/main_add_form.php', [$categories, $form_errors, $form_olddata]);
 }
 
-connect_code('templates/footer.php', $categories); 
+connect_code('templates/footer.php', $categories);
 ?>
 </body>
 </html>

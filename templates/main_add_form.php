@@ -4,6 +4,7 @@ $form_errors = $data[1];
 $form_olddata = $data[2];
 ?>
 <main>
+  <?php if (!empty($form_errors['mysql'])) echo '<p>'.$form_errors['mysql'].'</p>'; ?>
   <nav class="nav">
     <ul class="nav__list container">
       <?php foreach ($categories as $category) { ?>
@@ -26,7 +27,7 @@ $form_olddata = $data[2];
         <select id="category" name="category">
           <option value="">Выберите категорию</option>
         <?php foreach ($categories as $category) { ?>
-          <option value="<?=$category[0]; ?>"<?php if (!empty($form_errors) && $category[0]==$form_olddata['category']) echo ' selected'; ?>><?=$category[1]; ?></option>  
+          <option value="<?=$category[0]; ?>"<?php if (!empty($form_errors) && $category[0]==$form_olddata['category']) echo ' selected'; ?>><?=$category[1]; ?></option>
         <?php } ?>
         </select>
         <span class="form__error"><?php if (!empty($form_errors['category'])) echo $form_errors['category']; ?></span>

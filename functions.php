@@ -40,16 +40,6 @@ function protect_code($in_data) {
     return htmlspecialchars(strip_tags(trim($in_data)));
 }
 
-function item_save($name, $description, $image, $rate, $finishdate, $step, $author, $category) { // будет заменена методом класса
-    $database = new Database;
-    $sql = "INSERT INTO items SET id = NULL, date_add = NOW(), item_name = ?,
-    description = ?, image_path = ?, price_start = ?, date_end = ?,
-    bet_step = ?, favorites_count = NULL, user_author_id = ?,
-    user_winner_id = NULL, category_id = ?;";
-    $newitem = $database->insertData($sql, [$name, $description, $image, $rate, $finishdate, $step, $author, $category]);
-    return $newitem;
-}
-
 function email_used($email, $connection) { // в эту вспомогательную функцию приходится передавать соединение(
     $email = protect_code($email, $connection);
     if (!empty($email)) {

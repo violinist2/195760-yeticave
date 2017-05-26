@@ -6,6 +6,8 @@ require_once 'functions.php';
 require_once 'classes/BaseFinder.php';
 require_once 'classes/CategoryFinder.php';
 require_once 'classes/UserFinder.php';
+require_once 'classes/BaseRecord.php';
+require_once 'classes/UserRecord.php';
 
 $form_errors = [];
 if ($_POST['form-sent']) {
@@ -31,7 +33,7 @@ if ($_POST['form-sent']) {
                 // проверка на формат пройдена
                 $nextuserid = new UserFinder($connection);
                 $fileto = "img/users/user".$nextuserid->getNextId().".".strtolower(pathinfo($file['name'], PATHINFO_EXTENSION)); // даем файлу на сервер такое же имя, каким будет id, и прежнее расширение
-                move_uploaded_file($file['tmp_name'], $fileto);               
+                move_uploaded_file($file['tmp_name'], $fileto);
             } else {
                 // неподходящий формат!
                 $form_errors['file'] = 'Для аватара принимаются изображения формата .JPG, .PNG или .GIF!';
@@ -41,12 +43,12 @@ if ($_POST['form-sent']) {
     if (empty($form_errors)) { // если уже НИКАКИХ ошибок нет - регистрация
         if ($file['name']=="") $fileto = ""; // если файла не было, пустая переменная для аватара
         // записываем пользователя в базу
-        $password_hash = password_hash($_POST['password'], PASSWORD_DEFAULT);// хэш пароля
-        $sql = "INSERT INTO users SET id = NULL, date_register = NOW(), email = ?, username = ?, password = ?, avatar_path = ?, contacts = ?;";
-        $insert = $database->insertData($sql, [$_POST['email'], $_POST['name'], $password_hash, $fileto, $_POST['message']]);
+        $newuser = new UserRecord($connection);
+        $password_hash = $newuser->changePassword($_POST['password']);
+        $insert = $newuser->userRegister($_POST['email'], $_POST['name'], $password_hash, $fileto, $_POST['message']);
         if ($insert) { // если добавлено успешно
             session_start();
-            $_SESSION['user'] = ['new' => true]; // метка о новом пользователе пишется в сессию
+            $_SESSION['user'] = ['new' => true]; // метка о новом пользователе пишется в сессию, чтобы приветствие показать
             header("Location: /login.php");
             exit(); // сценарий закончен: регистрация успешна, перешли на логин с приветствием новому пользователю
         } else { // если ошибка базы
@@ -81,7 +83,7 @@ $form_olddata = [
 
 connect_code('templates/main_sign-up_form.php', [$categories, $form_errors, $form_olddata]);
 
-connect_code('templates/footer.php', $categories); 
+connect_code('templates/footer.php', $categories);
 ?>
 </body>
 </html>

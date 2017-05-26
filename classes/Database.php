@@ -16,18 +16,7 @@ class Database {
         }
     }
 
-    public function insertData($sql, $arguments) {
-        $connection = $this->connectData();
-        $stmt = db_get_prepare_stmt($connection, $sql, $arguments);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-        $result = mysqli_stmt_insert_id($stmt); 
-        mysqli_stmt_close($stmt);
-        mysqli_close($connection);
-        return $result;    
-    }
-
-    public function updateData($table, $changes_data, $conditions_data) {
+    public function updateData($table, $changes_data, $conditions_data) { // будет заменена классом, или не использовать?
         $connection = $this->connectData();
         $sql = "UPDATE ".$table." SET ";
         foreach ($changes_data as $key => $value) {
@@ -41,8 +30,8 @@ class Database {
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_affected_rows($stmt);
         mysqli_stmt_close($stmt);
-        mysqli_close($connection);   
-        return $result;    
+        mysqli_close($connection);
+        return $result;
     }
 }
 ?>
