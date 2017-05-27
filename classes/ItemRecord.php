@@ -16,8 +16,19 @@ class ItemRecord extends BaseRecord {
     public $user_winner_id;
     public $category_id;
 
+    /**
+     * Особый метод для подачи запроса на добавление в базу нового лота
+     * @param string $item_name Название лота
+     * @param string $description Аннотация к лоту
+     * @param string $image_path Путь к файлу изображения лота
+     * @param int $price_start Стартовая цена
+     * @param var $date_end Дата окончания продаж
+     * @param int $bet_step Шаг ставки
+     * @param int $user_author_id ID пользователя, добавляющего лот
+     * @param int $category_id ID категории добавляемого лота
+     * @return int ID нового лота в базе
+     */
     public function itemAdd($item_name, $description, $image_path, $price_start, $date_end, $bet_step, $user_author_id, $category_id) {
-        // Специальный метод для подачи запроса на запись нового лота
         return $this->insert([
             ['date_add' => date('Y-m-d H:i:s')],
             ['item_name' => $item_name],

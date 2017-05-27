@@ -1,12 +1,34 @@
 <?php
 
+/**
+ * Класс для соединения с базой данных
+ */
 class Database {
 
+    /**
+     * @var string $mysql_server Хост (сервер) базы данных
+     */
     private $mysql_server = "localhost";
+
+    /**
+     * @var string $mysql_user Имя пользователя базы данныхх
+     */
     private $mysql_user = "root";
+
+    /**
+     * @var string $mysql_password Пароль указанного выше пользователя базы данных
+     */
     private $mysql_password = "";
+
+    /**
+     * @var string $mysql_base Имя базы данных проекта
+     */
     private $mysql_base = "195760-yeticave";
 
+    /**
+     * Метод для соединения с базой данных
+     * @return mysqli $connection Ресурс соединенияили оишбка соединения
+     */
     public function connectData() {
         $connection = mysqli_connect($this->mysql_server, $this->mysql_user, $this->mysql_password, $this->mysql_base);
         if ($connection == false) {
@@ -14,24 +36,6 @@ class Database {
         } else {
             return $connection;
         }
-    }
-
-    public function updateData($table, $changes_data, $conditions_data) { // будет заменена классом, или не использовать?
-        $connection = $this->connectData();
-        $sql = "UPDATE ".$table." SET ";
-        foreach ($changes_data as $key => $value) {
-            $arguments[] = $changes_data[$key][key($value)];
-            $sql .= key($value)." = ?";
-            if ($key < count($changes_data) - 1) $sql .= ", ";
-        }
-        $sql .= " WHERE ".key($conditions_data)." = ?;";
-        $arguments[] = $conditions_data[key($conditions_data)];
-        $stmt = db_get_prepare_stmt($connection, $sql, $arguments);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_affected_rows($stmt);
-        mysqli_stmt_close($stmt);
-        mysqli_close($connection);
-        return $result;
     }
 }
 ?>

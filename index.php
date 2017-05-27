@@ -22,7 +22,7 @@ $category = new CategoryFinder($connection);
 $categories = $category->getCategories();
 
 $userdata = $auth->getUserdata();
-connect_code('templates/header.php', $userdata); 
+connect_code('templates/header.php', $userdata);
 
 $items = new ItemFinder($connection);
 $open_items = $items->getOpenItems();

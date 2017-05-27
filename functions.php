@@ -1,13 +1,5 @@
 <?php
 date_default_timezone_set('Europe/Moscow');
-// записать в эту переменную оставшееся время в этом формате (ЧЧ:ММ)
-$lot_time_remaining = "00:00";
-// временная метка для полночи следующего дня
-$tomorrow = strtotime('tomorrow midnight');
-// временная метка для настоящего времени
-$now = time();
-$lot_time_remaining = date('H:i' ,$tomorrow - $now - 3600 * 3);
-
 $database = new Database;
 $connection = $database->connectData();
 require_once('mysql_helper.php');
